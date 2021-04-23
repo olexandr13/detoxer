@@ -1,10 +1,3 @@
-import { $, $$ } from './src/element';
-import { helpers } from './src/helpers';
-import { log } from './src/logger';
-
-export default {
-  $: $,
-  $$: $$,
-  helpers: helpers,
-  log: log,
-}
+export { $, $$ } from './src/element';
+export { helpers } from './src/helpers';
+export { log } from './src/logger';
