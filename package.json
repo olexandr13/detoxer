@@ -1,0 +1,23 @@
+{
+  "name": "detox-wrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "detox": "^18.12.0",
+    "tslog": "^3.2.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC"
+}
