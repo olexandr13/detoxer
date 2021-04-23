@@ -2,7 +2,7 @@
   "name": "detox-wrapper",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "dependencies": {
     "detox": "^18.12.0",
     "tslog": "^3.2.0"
