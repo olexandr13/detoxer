@@ -103,6 +103,7 @@ class Element {
   async tap(point?: { x: number; y: number }): Promise<DetoxElement> {
     const elem = await this.wait({ visible: false });
     try {
+      // @ts-ignore
       await elem.tap(point);
     } catch (e) {
       throw new Error(`Cannot tap on element with selector "${this.selector}"
