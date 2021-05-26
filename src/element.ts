@@ -133,7 +133,8 @@ class Element {
     timeout = 5,
     visible = true,
   }: { timeout?: number; visible?: boolean } = {}): Promise<DetoxElement> {
-    log.info(`Wait for element with selector ${helpers.stringify(this.selector)}`);
+    log.info(`Wait for element with selector ${helpers.prettyStringify(this.selector)}`);
+    if (timeout > 100) throw new Error(`Timeout should be specified in seconds, not milliseconds. The value you passed = "${timeout}" s`)
     try {
       if (visible === false) {
         await waitFor(this.element).toExist().withTimeout(timeout * 1000);
@@ -141,7 +142,7 @@ class Element {
         await waitFor(this.element).toBeVisible().withTimeout(timeout * 1000);
       }
     } catch (e) {
-      throw new Error(`Wait for element with locator "${helpers.stringify(this.selector)}" failed
+      throw new Error(`Wait for element with locator "${helpers.prettyStringify(this.selector)}" failed
       ${e}`);
     }
 
