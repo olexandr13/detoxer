@@ -1,13 +1,18 @@
 import { by, element as detoxElement, expect, waitFor } from 'detox';
-import { log } from './logger';
 import { helpers } from './helpers';
+import { log } from './logger';
 
-type SwipeDirection = 'left' | 'right' | 'up' | 'down';
+type DetoxElement = Detox.NativeElement | Detox.IndexableNativeElement;
+type DetoxIndexable = { atIndex: () => {} };
+export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
+
+function isIndexableDetoxElement(type: DetoxIndexable | Detox.NativeElement): type is DetoxIndexable {
+  return (type as DetoxIndexable).atIndex !== undefined;
+}
 
 class Element {
   private locator: Detox.NativeMatcher;
-  // TODO: fix any
-  element: any;
+  element: DetoxElement;
 
   constructor(public selector: string) {
     let selectorType: 'id' | 'text';
@@ -27,28 +32,31 @@ class Element {
 
   // do not use indexes, cause they differ on iOS and Android (docs and practice say the same)
   atIndex(index: number): Element {
+    if (!isIndexableDetoxElement(this.element)) throw new Error(`You try to get index from non-indexable element`);
     this.element = this.element.atIndex(index) as Detox.NativeElement;
     return this;
   }
 
-  async clear(): Promise<Detox.IndexableNativeElement> {
+  async clear(): Promise<DetoxElement> {
     const elem = await this.wait();
     await elem.clearText();
     return elem;
   }
 
-  get(): Detox.IndexableNativeElement {
+  get(): Detox.IndexableNativeElement | Detox.NativeElement {
     return this.element;
   }
 
-  async longPress(): Promise<Detox.IndexableNativeElement> {
+  async longPress(): Promise<DetoxElement> {
     const elem = await this.wait();
     await elem.longPress();
     return elem;
   }
 
-  async replaceText(value: string): Promise<Detox.IndexableNativeElement> {
+  async replaceText(value: string): Promise<DetoxElement> {
+    log.info(`Replace text to "${value}" into element with selector "${this.selector}"`);
     const elem = await this.wait();
+    await elem.tap();
     await elem.replaceText(value);
     return elem;
   }
@@ -56,7 +64,7 @@ class Element {
   async scroll({
     offset = 500,
     direction = 'down',
-  }: { offset?: number; direction?: SwipeDirection } = {}): Promise<Detox.IndexableNativeElement> {
+  }: { offset?: number; direction?: SwipeDirection } = {}): Promise<DetoxElement> {
     const elem = await this.wait();
     await elem.scroll(offset, direction);
 
@@ -66,7 +74,7 @@ class Element {
   async scrollWhileElementVisible(
     elementSelectorToWait: string,
     scrollDirection: 'down' | 'up' = 'down',
-  ): Promise<Detox.IndexableNativeElement> {
+  ): Promise<DetoxElement> {
     await this.wait();
     const elementToWait = new Element(elementSelectorToWait).element;
     await waitFor(elementToWait)
@@ -85,23 +93,27 @@ class Element {
     direction?: SwipeDirection;
     speed?: 'fast' | 'slow';
     normalizedOffset?: number;
-  } = {}): Promise<Detox.IndexableNativeElement> {
+  } = {}): Promise<DetoxElement> {
     const elem = await this.wait();
     await elem.swipe(direction, speed, normalizedOffset, NaN, NaN);
 
     return this.element;
   }
 
-  async tap(point?: { x: number; y: number }): Promise<Detox.IndexableNativeElement> {
-    const elem = await this.wait({visible: false});
-    // @ts-ignore
-    await elem.tap(point);
+  async tap(point?: { x: number; y: number }): Promise<DetoxElement> {
+    const elem = await this.wait({ visible: false });
+    try {
+      await elem.tap(point);
+    } catch (e) {
+      throw new Error(`Cannot tap on element with selector "${this.selector}"
+      ${e}`)
+    }
     return elem;
   }
 
   async tapBackspace({
     times = 1,
-  }: { times?: number } = {}): Promise<Detox.IndexableNativeElement> {
+  }: { times?: number } = {}): Promise<DetoxElement> {
     const elem = await this.wait();
     for (let i = 1; i <= times; i++) {
       await elem.tapBackspaceKey();
@@ -109,7 +121,7 @@ class Element {
     return elem;
   }
 
-  async type(value: string): Promise<Detox.IndexableNativeElement> {
+  async type(value: string): Promise<DetoxElement> {
     log.info(`Type text "${value}" into element with selector "${this.selector}"`);
     const elem = await this.wait();
     await elem.tap();
@@ -118,15 +130,15 @@ class Element {
   }
 
   async wait({
-    timeout = 11000,
+    timeout = 5,
     visible = true,
-  }: { timeout?: number; visible?: boolean } = {}): Promise<Detox.IndexableNativeElement> {
+  }: { timeout?: number; visible?: boolean } = {}): Promise<DetoxElement> {
     log.info(`Wait for element with selector ${helpers.stringify(this.selector)}`);
     try {
       if (visible === false) {
-        await waitFor(this.element).toExist().withTimeout(timeout);
+        await waitFor(this.element).toExist().withTimeout(timeout * 1000);
       } else {
-        await waitFor(this.element).toBeVisible().withTimeout(timeout);
+        await waitFor(this.element).toBeVisible().withTimeout(timeout * 1000);
       }
     } catch (e) {
       throw new Error(`Wait for element with locator "${helpers.stringify(this.selector)}" failed
@@ -135,16 +147,14 @@ class Element {
 
     return this.element;
   }
-  // withTimeout(timeout) works as a piece of thit; implement own waiter for this function
-  // examples of bad behavior: if more than 1 element is present on page with the same selector - it fails
 
   should = {
     beVisible: async (timeout?: number): Promise<void> => {
       await this.wait({ timeout });
     },
 
-    exist: async (): Promise<void> => {
-      await this.wait({ visible: false });
+    exist: async (timeout?: number): Promise<void> => {
+      await this.wait({ visible: false, timeout: timeout });
     },
 
     not: {
@@ -191,7 +201,6 @@ class ElementsList {
 
   should = {
     beVisible: async (): Promise<void> => {
-      // await Promise.all(this.elements.map(async (element) => await element.wait()));
       for (let i = 0; i < this.elements.map.length; i++) {
         await this.elements[i].wait();
       }
@@ -201,3 +210,5 @@ class ElementsList {
 
 export const $ = (selector: string) => new Element(selector);
 export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
+
+// device.getPlatform() === 'ios'
