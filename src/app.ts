@@ -1,3 +1,5 @@
+import { device } from 'detox';
+
 export const app = {
   async clearApp() {
     await device.terminateApp();

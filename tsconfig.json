@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "es5",
     "declaration": true,
     "inlineSourceMap": true,
     "moduleResolution": "node",
-    // "sourceMap": true,
     "rootDir": "src",
     "outDir": "lib",
     "strict": true,
