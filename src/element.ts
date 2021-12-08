@@ -76,7 +76,7 @@ class Element {
 
   async scrollWhileElementVisible(
     elementSelectorToWait: string,
-    scrollDirection: 'down' | 'up' = 'down';
+    scrollDirection: 'down' | 'up' = 'down',
   ): Promise<DetoxElement> {
     await this.wait();
     const elementToWait = new Element(elementSelectorToWait).element;
@@ -130,27 +130,35 @@ class Element {
     return elem;
   }
 
+
   async wait({
-    timeout = 5,
+    timeout = 11000,
     visible = true,
-  }: { timeout?: number; visible?: boolean } = {}): Promise<DetoxElement> {
-    log.info(`Wait for element with selector ${helpers.stringify(this.selector)}`);
+    sleepAfter = 800,
+  }: {
+    timeout?: number;
+    visible?: boolean;
+    sleepAfter?: number;
+  } = {}): Promise<DetoxElement> {
+    log.info(
+      `Wait for element with selector ${
+        this.selector
+      } with visibility set to ${visible.toString()}`,
+    );
     try {
       if (visible === false) {
-        await waitFor(this.element)
-          .toExist()
-          .withTimeout(timeout * 1000);
+        await waitFor(this.element).toExist().withTimeout(timeout);
       } else {
-        await waitFor(this.element)
-          .toBeVisible()
-          .withTimeout(timeout * 1000);
+        await waitFor(this.element).toBeVisible().withTimeout(timeout);
       }
     } catch (e) {
       throw new Error(`Wait for element with locator "${helpers.stringify(this.selector)}" failed
       ${e}`);
     }
 
-    return this.element
+    await helpers.sleep(sleepAfter);
+
+    return this.element;
   }
 
   async getText(): Promise<string> {

@@ -28,9 +28,10 @@ declare class Element {
         times?: number;
     }): Promise<DetoxElement>;
     type(value: string): Promise<DetoxElement>;
-    wait({ timeout, visible, }?: {
+    wait({ timeout, visible, sleepAfter, }?: {
         timeout?: number;
         visible?: boolean;
+        sleepAfter?: number;
     }): Promise<DetoxElement>;
     getText(): Promise<string>;
     should: {
