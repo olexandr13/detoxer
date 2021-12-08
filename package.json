@@ -4,8 +4,12 @@
   "description": "This is wrapper for detox framework with additional functionality including lazy elements, logger, helpers etc.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
   "dependencies": {
-    "detox": "^18.14.1",
+    "detox": "^19.3.0",
     "tslog": "^3.2.0"
   },
   "type": "module",

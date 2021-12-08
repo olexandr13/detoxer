@@ -24,7 +24,7 @@ declare class Element {
         x: number;
         y: number;
     }): Promise<DetoxElement>;
-    tapBackspace({ times, }?: {
+    tapBackspace({ times }?: {
         times?: number;
     }): Promise<DetoxElement>;
     type(value: string): Promise<DetoxElement>;
@@ -32,6 +32,7 @@ declare class Element {
         timeout?: number;
         visible?: boolean;
     }): Promise<DetoxElement>;
+    getText(): Promise<string>;
     should: {
         beVisible: (timeout?: number | undefined) => Promise<void>;
         exist: (timeout?: number | undefined) => Promise<void>;
@@ -39,12 +40,13 @@ declare class Element {
             beVisible: () => Promise<void>;
             exist: () => Promise<void>;
         };
+        disappear: (timeout?: number) => Promise<void>;
         have: {
             text: (value: string) => Promise<void>;
             label: (value: string) => Promise<void>;
             id: (value: string) => Promise<void>;
             value: (value: string) => Promise<void>;
-            toggleValue: (value: string) => Promise<void>;
+            toggleValue: (value: boolean) => Promise<void>;
         };
     };
 }
