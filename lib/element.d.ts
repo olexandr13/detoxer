@@ -33,6 +33,10 @@ declare class Element {
         visible?: boolean;
         sleepAfter?: number;
     }): Promise<DetoxElement>;
+    exists({ timeout, visible, }?: {
+        timeout?: number;
+        visible?: boolean;
+    }): Promise<boolean>;
     getText(): Promise<string>;
     should: {
         beVisible: (timeout?: number | undefined) => Promise<void>;

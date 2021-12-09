@@ -17,11 +17,14 @@ class Element {
   element: DetoxElement;
 
   constructor(public selector: string) {
-    let selectorType: 'id' | 'text';
+    let selectorType: 'id' | 'text' | 'label';
     let selectorValue: string;
 
     if (selector[0] === '#') {
       selectorType = 'id';
+      selectorValue = selector.slice(1);
+    } else if (selector[0] === '~') {
+      selectorType = 'label';
       selectorValue = selector.slice(1);
     } else {
       selectorType = 'text';
@@ -105,13 +108,17 @@ class Element {
 
   async tap(point?: { x: number; y: number }): Promise<DetoxElement> {
     const elem = await this.wait();
+    log.info(
+      `Tap on element with selector "${this.selector}" at ${helpers.stringify(point) || 'default'
+      } point`,
+    );
     try {
       await elem.tap(point);
     } catch (e) {
       throw new Error(`Cannot tap on element with selector "${this.selector}"
       ${e}`)
     }
-    return elem
+    return elem;
   }
 
   async tapBackspace({ times = 1 }: { times?: number } = {}): Promise<DetoxElement> {
@@ -119,7 +126,7 @@ class Element {
     for (let i = 1; i <= times; i++) {
       await elem.tapBackspaceKey();
     }
-    return elem
+    return elem;
   }
 
   async type(value: string): Promise<DetoxElement> {
@@ -141,8 +148,7 @@ class Element {
     sleepAfter?: number;
   } = {}): Promise<DetoxElement> {
     log.info(
-      `Wait for element with selector ${
-        this.selector
+      `Wait for element with selector ${this.selector
       } with visibility set to ${visible.toString()}`,
     );
     try {
@@ -161,12 +167,29 @@ class Element {
     return this.element;
   }
 
+  async exists({
+    timeout = 1000,
+    visible = true,
+  }: {
+    timeout?: number;
+    visible?: boolean;
+  } = {}): Promise<boolean> {
+    try {
+      await this.wait({ timeout, visible });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async getText(): Promise<string> {
+    await this.wait();
+    log.info(`Getting text for element "${this.selector}"`);
     const platform = device.getPlatform();
     if (platform !== 'ios') throw new Error(`Can get text only for ios platform for now.
     Your current platform: ${platform}`);
 
-    return ((this.element as any).getAttributes()).label;
+    return (await (this.element as any).getAttributes()).label;
   }
 
   should = {

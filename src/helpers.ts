@@ -3,8 +3,8 @@ export const helpers = {
     return JSON.stringify(json, null, 2);
   },
 
-  async sleep(seconds: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+  async sleep(miliSeconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, miliSeconds));
   },
 
   stringify(json: any): string {
