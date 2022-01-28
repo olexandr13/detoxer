@@ -1,6 +1,6 @@
 {
   "name": "detoxer",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "This is wrapper for detox framework with additional functionality including lazy elements, logger, helpers etc.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

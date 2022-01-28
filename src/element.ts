@@ -78,16 +78,14 @@ class Element {
   }
 
   async scrollWhileElementVisible(
-    elementSelectorToWait: string,
+    elementToWait: DetoxElement,
     scrollDirection: 'down' | 'up' = 'down',
   ): Promise<DetoxElement> {
     await this.wait();
-    const elementToWait = new Element(elementSelectorToWait).element;
     await waitFor(elementToWait)
       .toBeVisible()
       .whileElement(this.locator)
       .scroll(400, scrollDirection);
-
     return elementToWait;
   }
 
