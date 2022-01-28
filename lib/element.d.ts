@@ -14,7 +14,7 @@ declare class Element {
         offset?: number;
         direction?: SwipeDirection;
     }): Promise<DetoxElement>;
-    scrollWhileElementVisible(elementSelectorToWait: string, scrollDirection?: 'down' | 'up'): Promise<DetoxElement>;
+    scrollWhileElementVisible(elementToWait: DetoxElement, scrollDirection?: 'down' | 'up'): Promise<DetoxElement>;
     swipe({ direction, speed, normalizedOffset, }?: {
         direction?: SwipeDirection;
         speed?: 'fast' | 'slow';
