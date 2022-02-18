@@ -1,3 +1,5 @@
-import { Logger } from 'tslog';
+import { Logger, TLogLevelName } from 'tslog';
 
-export const log: Logger = new Logger({ minLevel: 'info', colorizePrettyLogs: true });
+const logLevel: TLogLevelName = process.env.LOG_LEVEL as TLogLevelName || 'info';
+
+export const log: Logger = new Logger({ minLevel: logLevel, colorizePrettyLogs: true });
