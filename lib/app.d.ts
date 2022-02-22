@@ -1,4 +1,4 @@
 export declare const app: {
-    clearApp(): Promise<void>;
-    launchAppWithPermissions(): Promise<void>;
+    reinstall(): Promise<void>;
+    launchWithPermissions(permissions?: Detox.DevicePermissions | undefined): Promise<void>;
 };

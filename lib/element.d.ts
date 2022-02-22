@@ -47,6 +47,7 @@ declare class Element {
         };
         disappear: (timeout?: number) => Promise<void>;
         have: {
+            _: (paramToCheck: 'Text' | 'Label' | 'Id' | 'Value' | 'ToggleValue', value: string | boolean) => Promise<void>;
             text: (value: string) => Promise<void>;
             label: (value: string) => Promise<void>;
             id: (value: string) => Promise<void>;

@@ -40,7 +40,7 @@ class Element {
     if (!isIndexableDetoxElement(this.element))
       throw new Error(`You try to get index from non-indexable element`);
     this.element = this.element.atIndex(index) as Detox.NativeElement;
-    return this
+    return this;
   }
 
   async clear(): Promise<DetoxElement> {
@@ -231,25 +231,37 @@ class Element {
     },
 
     have: {
-      text: async (value: string): Promise<void> => {
+      _: async (paramToCheck: 'Text' | 'Label' | 'Id' | 'Value' | 'ToggleValue', value: string | boolean): Promise<void> => {
+        if (typeof value === 'boolean' && paramToCheck !== 'ToggleValue') throw new Error(`Boolean value could not be passed for "${paramToCheck}" check`);
+
+        type ExpectedCondition = 'toHaveText' | 'toHaveLabel' | 'toHaveId' | 'toHaveValue' | 'toHaveToggleValue';
+        const expectedCondition = 'toHave' + paramToCheck as ExpectedCondition;
         await this.wait();
-        await expect(this.element).toHaveText(value);
+        for (let i = 0; i < 10; i++) {
+          try {
+            await expect(this.element)[expectedCondition](value);
+            break;
+          } catch (e) {
+            log.debug(`You expected element with locator "${this.locator}" to have text ${value}. But it does not. Waiting...`);
+            await helpers.sleep(500);
+          }
+        }
+      },
+
+      text: async (value: string): Promise<void> => {
+        await this.should.have._('Text', value);
       },
       label: async (value: string): Promise<void> => {
-        await this.wait();
-        await expect(this.element).toHaveLabel(value);
+        await this.should.have._('Label', value);
       },
       id: async (value: string): Promise<void> => {
-        await this.wait();
-        await expect(this.element).toHaveId(value);
+        await this.should.have._('Id', value);
       },
       value: async (value: string): Promise<void> => {
-        await this.wait();
-        await expect(this.element).toHaveValue(value);
+        await this.should.have._('Value', value);
       },
       toggleValue: async (value: boolean): Promise<void> => {
-        await this.wait();
-        await expect(this.element).toHaveToggleValue(value);
+        await this.should.have._('ToggleValue', value);
       },
     },
   }
@@ -273,3 +285,6 @@ class ElementsList {
 
 export const $ = (selector: string) => new Element(selector);
 export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
+
+
+// TODO: implement scrollToIndex()
