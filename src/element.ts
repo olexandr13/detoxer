@@ -187,7 +187,9 @@ class Element {
     if (platform !== 'ios') throw new Error(`Can get text only for ios platform for now.
     Your current platform: ${platform}`);
 
-    return (await (this.element as any).getAttributes()).label;
+    const text = (await (this.element as any).getAttributes()).label;
+    if (!text) throw new Error(`There is no text for element with selector "${this.selector}"`)
+    return text;
   }
 
   should = {
@@ -242,7 +244,7 @@ class Element {
             await expect(this.element)[expectedCondition](value);
             break;
           } catch (e) {
-            log.debug(`You expected element with locator "${this.locator}" to have text ${value}. But it does not. Waiting...`);
+            log.debug(`You expected element with locator "${this.locator}" to have text ${paramToCheck}. But it does not. Waiting...`);
             await helpers.sleep(500);
           }
         }
