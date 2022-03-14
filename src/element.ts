@@ -80,6 +80,10 @@ class Element {
     return this.element;
   }
 
+  withParent(parentSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+    return this.withAncestor(parentSelector);
+  }
+
   withDescendant(descendantSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(descendantSelector);
     const descendantLocator = by[selectorType](selectorValue);
@@ -88,6 +92,10 @@ class Element {
     this.element = detoxElement(this.locator);
 
     return this.element;
+  }
+
+  withChild(childSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+    return this.withDescendant(childSelector);
   }
 
   async longPress(): Promise<DetoxElement> {
@@ -326,3 +334,7 @@ export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
 
 
 // TODO: implement scrollToIndex()
+
+$('#some-id').and('#someText');
+$('#id').withAncestor('ansector-selector');
+$('#id').withDescendant('descendant-selector');

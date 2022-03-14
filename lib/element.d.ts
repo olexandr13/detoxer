@@ -11,7 +11,9 @@ declare class Element {
     get(): Detox.IndexableNativeElement | Detox.NativeElement;
     and(andSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
     withAncestor(ancestorSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
+    withParent(parentSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
     withDescendant(descendantSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
+    withChild(childSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
     longPress(): Promise<DetoxElement>;
     replaceText(value: string): Promise<DetoxElement>;
     scroll({ offset, direction, }?: {
