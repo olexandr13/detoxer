@@ -5,9 +5,13 @@ declare class Element {
     private locator;
     element: DetoxElement;
     constructor(selector: string);
+    private _getSelectorTypeAndValue;
     atIndex(index: number): Element;
     clear(): Promise<DetoxElement>;
     get(): Detox.IndexableNativeElement | Detox.NativeElement;
+    and(andSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
+    withAncestor(ancestorSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
+    withDescendant(descendantSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
     longPress(): Promise<DetoxElement>;
     replaceText(value: string): Promise<DetoxElement>;
     scroll({ offset, direction, }?: {
@@ -15,8 +19,8 @@ declare class Element {
         direction?: SwipeDirection;
     }): Promise<DetoxElement>;
     scrollWhileElementVisible(elementToWait: DetoxElement, scrollDirection?: 'down' | 'up'): Promise<DetoxElement>;
-    swipe(params?: {
-        direction: SwipeDirection;
+    swipe({ direction, speed, normalizedOffset, }?: {
+        direction?: SwipeDirection;
         speed?: 'fast' | 'slow';
         normalizedOffset?: number;
     }): Promise<DetoxElement>;
