@@ -321,11 +321,8 @@ class ElementsList {
   }
 }
 
-export const $ = (selector: string, andSelector?: string) => new Element(selector, andSelector);
+export const $ = (selector: string) => new Element(selector);
 export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
 
 
 // TODO: implement scrollToIndex()
-
-
-$('asdkfj', 'askdfjk')
