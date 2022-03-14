@@ -334,7 +334,3 @@ export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
 
 
 // TODO: implement scrollToIndex()
-
-$('#some-id').and('#someText');
-$('#id').withAncestor('ansector-selector');
-$('#id').withDescendant('descendant-selector');
