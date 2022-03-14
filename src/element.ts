@@ -6,6 +6,8 @@ type DetoxElement = Detox.NativeElement | Detox.IndexableNativeElement;
 type DetoxIndexable = { atIndex: () => {} };
 export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 
+type SelectorType = 'id' | 'text' | 'label';
+
 function isIndexableDetoxElement(
   type: DetoxIndexable | Detox.NativeElement
 ): type is DetoxIndexable {
@@ -13,11 +15,20 @@ function isIndexableDetoxElement(
 }
 
 class Element {
+  // locator refers to detox matcher
   private locator: Detox.NativeMatcher;
   element: DetoxElement;
 
+  // selector refers just to strin which is parsed to define matcher type and value
   constructor(public selector: string) {
-    let selectorType: 'id' | 'text' | 'label';
+    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
+
+    this.locator = by[selectorType](selectorValue);
+    this.element = detoxElement(this.locator);
+  }
+
+  private _getSelectorTypeAndValue(selector: string): { selectorType: SelectorType, selectorValue: string } {
+    let selectorType: SelectorType;
     let selectorValue: string;
 
     if (selector[0] === '#') {
@@ -31,8 +42,7 @@ class Element {
       selectorValue = selector;
     }
 
-    this.locator = by[selectorType](selectorValue);
-    this.element = detoxElement(this.locator);
+    return { selectorType, selectorValue };
   }
 
   // do not use indexes, cause they differ on iOS and Android (docs and practice say the same)
@@ -50,6 +60,33 @@ class Element {
   }
 
   get(): Detox.IndexableNativeElement | Detox.NativeElement {
+    return this.element;
+  }
+
+  and(andSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(andSelector);
+    this.locator = this.locator.and(by[selectorType](selectorValue));
+    this.element = detoxElement(this.locator);
+    return this.element;
+  }
+
+  withAncestor(ancestorSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(ancestorSelector);
+    const ancestorLocator = by[selectorType](selectorValue);
+
+    this.locator = this.locator.withAncestor(ancestorLocator);
+    this.element = detoxElement(this.locator);
+
+    return this.element;
+  }
+
+  withDescendant(descendantSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(descendantSelector);
+    const descendantLocator = by[selectorType](selectorValue);
+
+    this.locator = this.locator.withDescendant(descendantLocator);
+    this.element = detoxElement(this.locator);
+
     return this.element;
   }
 
@@ -134,7 +171,6 @@ class Element {
     await elem.typeText(value);
     return elem;
   }
-
 
   async wait({
     timeout = 11000,
@@ -285,8 +321,11 @@ class ElementsList {
   }
 }
 
-export const $ = (selector: string) => new Element(selector);
+export const $ = (selector: string, andSelector?: string) => new Element(selector, andSelector);
 export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
 
 
 // TODO: implement scrollToIndex()
+
+
+$('asdkfj', 'askdfjk')
