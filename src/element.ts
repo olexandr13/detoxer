@@ -89,17 +89,17 @@ class Element {
     return elementToWait;
   }
 
-  async swipe({
-    direction = 'down',
-    speed = 'fast',
-    normalizedOffset = NaN,
-  }: {
-    direction?: SwipeDirection;
+  async swipe(params: {
+    direction: SwipeDirection;
     speed?: 'fast' | 'slow';
     normalizedOffset?: number;
-  } = {}): Promise<DetoxElement> {
+  } = {
+    direction: 'down',
+    speed: 'fast',
+    normalizedOffset: NaN,
+  }): Promise<DetoxElement> {
     const elem = await this.wait();
-    await elem.swipe(direction, speed, normalizedOffset, NaN, NaN);
+    await elem.swipe(params.direction, params.speed, params.normalizedOffset, NaN, NaN);
 
     return this.element;
   }
