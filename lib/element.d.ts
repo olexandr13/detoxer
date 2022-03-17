@@ -1,44 +1,43 @@
-declare type DetoxElement = Detox.NativeElement | Detox.IndexableNativeElement;
 export declare type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 declare class Element {
     selector: string;
+    private params?;
     private locator;
-    element: DetoxElement;
-    constructor(selector: string);
+    element: Detox.IndexableNativeElement | Detox.NativeElement;
+    constructor(selector: string, params?: {
+        and?: string | undefined;
+        withAncestor?: string | undefined;
+        withDescendant?: string | undefined;
+    } | undefined);
     private _getSelectorTypeAndValue;
-    atIndex(index: number): Element;
-    clear(): Promise<DetoxElement>;
+    atIndex(index: number): Detox.NativeElement;
+    clear(): Promise<Detox.NativeElement>;
     get(): Detox.IndexableNativeElement | Detox.NativeElement;
-    and(andSelector: string): Element;
-    withAncestor(ancestorSelector: string): Element;
-    withParent(parentSelector: string): Element;
-    withDescendant(descendantSelector: string): Element;
-    withChild(childSelector: string): Element;
-    longPress(): Promise<DetoxElement>;
-    replaceText(value: string): Promise<DetoxElement>;
+    longPress(): Promise<Detox.NativeElement>;
+    replaceText(value: string): Promise<Detox.NativeElement>;
     scroll({ offset, direction, }?: {
         offset?: number;
         direction?: SwipeDirection;
-    }): Promise<DetoxElement>;
-    scrollWhileElementVisible(elementToWait: DetoxElement, scrollDirection?: 'down' | 'up'): Promise<DetoxElement>;
+    }): Promise<Detox.NativeElement>;
+    scrollWhileElementVisible(elementToWait: Detox.NativeElement, scrollDirection?: 'down' | 'up'): Promise<Detox.NativeElement>;
     swipe({ direction, speed, normalizedOffset, }?: {
         direction?: SwipeDirection;
         speed?: 'fast' | 'slow';
         normalizedOffset?: number;
-    }): Promise<DetoxElement>;
+    }): Promise<Detox.NativeElement>;
     tap(point?: {
         x: number;
         y: number;
-    }): Promise<DetoxElement>;
+    }): Promise<Detox.NativeElement>;
     tapBackspace({ times }?: {
         times?: number;
-    }): Promise<DetoxElement>;
-    type(value: string): Promise<DetoxElement>;
+    }): Promise<Detox.NativeElement>;
+    type(value: string): Promise<Detox.NativeElement>;
     wait({ timeout, visible, sleepAfter, }?: {
         timeout?: number;
         visible?: boolean;
         sleepAfter?: number;
-    }): Promise<DetoxElement>;
+    }): Promise<Detox.NativeElement>;
     exists({ timeout, visible, }?: {
         timeout?: number;
         visible?: boolean;
@@ -69,6 +68,10 @@ declare class ElementsList {
         beVisible: () => Promise<void>;
     };
 }
-export declare const $: (selector: string) => Element;
+export declare const $: (selector: string, params?: {
+    and?: string | undefined;
+    withAncestor?: string | undefined;
+    withDescendant?: string | undefined;
+} | undefined) => Element;
 export declare const $$: (selectorsList: string[]) => ElementsList;
 export {};
