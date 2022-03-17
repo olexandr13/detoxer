@@ -63,38 +63,38 @@ class Element {
     return this.element;
   }
 
-  and(andSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+  and(andSelector: string): Element {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(andSelector);
     this.locator = this.locator.and(by[selectorType](selectorValue));
     this.element = detoxElement(this.locator);
-    return this.element;
+    return this;
   }
 
-  withAncestor(ancestorSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+  withAncestor(ancestorSelector: string): Element {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(ancestorSelector);
     const ancestorLocator = by[selectorType](selectorValue);
 
     this.locator = this.locator.withAncestor(ancestorLocator);
     this.element = detoxElement(this.locator);
 
-    return this.element;
+    return this;
   }
 
-  withParent(parentSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+  withParent(parentSelector: string): Element {
     return this.withAncestor(parentSelector);
   }
 
-  withDescendant(descendantSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+  withDescendant(descendantSelector: string): Element {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(descendantSelector);
     const descendantLocator = by[selectorType](selectorValue);
 
     this.locator = this.locator.withDescendant(descendantLocator);
     this.element = detoxElement(this.locator);
 
-    return this.element;
+    return this;
   }
 
-  withChild(childSelector: string): Detox.IndexableNativeElement | Detox.NativeElement {
+  withChild(childSelector: string): Element {
     return this.withDescendant(childSelector);
   }
 

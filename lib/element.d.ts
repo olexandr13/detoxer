@@ -9,11 +9,11 @@ declare class Element {
     atIndex(index: number): Element;
     clear(): Promise<DetoxElement>;
     get(): Detox.IndexableNativeElement | Detox.NativeElement;
-    and(andSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
-    withAncestor(ancestorSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
-    withParent(parentSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
-    withDescendant(descendantSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
-    withChild(childSelector: string): Detox.IndexableNativeElement | Detox.NativeElement;
+    and(andSelector: string): Element;
+    withAncestor(ancestorSelector: string): Element;
+    withParent(parentSelector: string): Element;
+    withDescendant(descendantSelector: string): Element;
+    withChild(childSelector: string): Element;
     longPress(): Promise<DetoxElement>;
     replaceText(value: string): Promise<DetoxElement>;
     scroll({ offset, direction, }?: {
