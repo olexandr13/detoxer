@@ -2,29 +2,47 @@ import { by, element as detoxElement, expect, waitFor } from 'detox';
 import { helpers } from './helpers';
 import { log } from './logger';
 
-type DetoxElement = Detox.NativeElement | Detox.IndexableNativeElement;
-type DetoxIndexable = { atIndex: () => {} };
 export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 
 type SelectorType = 'id' | 'text' | 'label';
 
-function isIndexableDetoxElement(
-  type: DetoxIndexable | Detox.NativeElement
-): type is DetoxIndexable {
-  return (type as DetoxIndexable).atIndex !== undefined
-}
-
 class Element {
   // locator refers to detox matcher
   private locator: Detox.NativeMatcher;
-  element: DetoxElement;
+  element: Detox.IndexableNativeElement | Detox.NativeElement;
 
   // selector refers just to strin which is parsed to define matcher type and value
-  constructor(public selector: string) {
+  constructor(public selector: string, private params?: {
+    and?: string,
+    withAncestor?: string,
+    withDescendant?: string,
+  }) {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
 
     this.locator = by[selectorType](selectorValue);
     this.element = detoxElement(this.locator);
+
+    if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
+      throw new Error(`Only one param could be passed amoung of ${helpers.stringify(params)}`);
+    }
+
+    if (params?.and) {
+      const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.and);
+      this.locator = this.locator.and(by[selectorType](selectorValue));
+      this.element = detoxElement(this.locator);
+    }
+
+    if (params?.withAncestor) {
+      const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withAncestor);
+      this.locator = this.locator.and(by[selectorType](selectorValue));
+      this.element = detoxElement(this.locator);
+    }
+
+    if (params?.withDescendant) {
+      const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withDescendant);
+      this.locator = this.locator.and(by[selectorType](selectorValue));
+      this.element = detoxElement(this.locator);
+    }
   }
 
   private _getSelectorTypeAndValue(selector: string): { selectorType: SelectorType, selectorValue: string } {
@@ -46,14 +64,13 @@ class Element {
   }
 
   // do not use indexes, cause they differ on iOS and Android (docs and practice say the same)
-  atIndex(index: number): Element {
-    if (!isIndexableDetoxElement(this.element))
-      throw new Error(`You try to get index from non-indexable element`);
+  atIndex(index: number): Detox.NativeElement {
+    // @ts-expect-error the issue occurs because of element could be either IndexableNativeElement or NativeElement 
     this.element = this.element.atIndex(index) as Detox.NativeElement;
-    return this;
+    return this.element;
   }
 
-  async clear(): Promise<DetoxElement> {
+  async clear(): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     await elem.clearText();
     return elem;
@@ -63,48 +80,13 @@ class Element {
     return this.element;
   }
 
-  and(andSelector: string): Element {
-    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(andSelector);
-    this.locator = this.locator.and(by[selectorType](selectorValue));
-    this.element = detoxElement(this.locator);
-    return this;
-  }
-
-  withAncestor(ancestorSelector: string): Element {
-    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(ancestorSelector);
-    const ancestorLocator = by[selectorType](selectorValue);
-
-    this.locator = this.locator.withAncestor(ancestorLocator);
-    this.element = detoxElement(this.locator);
-
-    return this;
-  }
-
-  withParent(parentSelector: string): Element {
-    return this.withAncestor(parentSelector);
-  }
-
-  withDescendant(descendantSelector: string): Element {
-    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(descendantSelector);
-    const descendantLocator = by[selectorType](selectorValue);
-
-    this.locator = this.locator.withDescendant(descendantLocator);
-    this.element = detoxElement(this.locator);
-
-    return this;
-  }
-
-  withChild(childSelector: string): Element {
-    return this.withDescendant(childSelector);
-  }
-
-  async longPress(): Promise<DetoxElement> {
+  async longPress(): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     await elem.longPress();
     return elem;
   }
 
-  async replaceText(value: string): Promise<DetoxElement> {
+  async replaceText(value: string): Promise<Detox.NativeElement> {
     log.info(`Replace text to "${value}" into element with selector "${this.selector}"`);
     const elem = await this.wait();
     await elem.tap();
@@ -115,7 +97,7 @@ class Element {
   async scroll({
     offset = 500,
     direction = 'down',
-  }: { offset?: number; direction?: SwipeDirection } = {}): Promise<DetoxElement> {
+  }: { offset?: number; direction?: SwipeDirection } = {}): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     await elem.scroll(offset, direction);
 
@@ -123,9 +105,9 @@ class Element {
   }
 
   async scrollWhileElementVisible(
-    elementToWait: DetoxElement,
+    elementToWait: Detox.NativeElement,
     scrollDirection: 'down' | 'up' = 'down',
-  ): Promise<DetoxElement> {
+  ): Promise<Detox.NativeElement> {
     await this.wait();
     await waitFor(elementToWait)
       .toBeVisible()
@@ -142,14 +124,14 @@ class Element {
     direction?: SwipeDirection;
     speed?: 'fast' | 'slow';
     normalizedOffset?: number;
-  } = {}): Promise<DetoxElement> {
+  } = {}): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     await elem.swipe(direction, speed, normalizedOffset, NaN, NaN);
 
     return this.element;
   }
 
-  async tap(point?: { x: number; y: number }): Promise<DetoxElement> {
+  async tap(point?: { x: number; y: number }): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     log.info(
       `Tap on element with selector "${this.selector}" at ${helpers.stringify(point) || 'default'
@@ -164,7 +146,7 @@ class Element {
     return elem;
   }
 
-  async tapBackspace({ times = 1 }: { times?: number } = {}): Promise<DetoxElement> {
+  async tapBackspace({ times = 1 }: { times?: number } = {}): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     for (let i = 1; i <= times; i++) {
       await elem.tapBackspaceKey();
@@ -172,7 +154,7 @@ class Element {
     return elem;
   }
 
-  async type(value: string): Promise<DetoxElement> {
+  async type(value: string): Promise<Detox.NativeElement> {
     log.info(`Type text "${value}" into element with selector "${this.selector}"`);
     const elem = await this.wait();
     await elem.tap();
@@ -188,7 +170,7 @@ class Element {
     timeout?: number;
     visible?: boolean;
     sleepAfter?: number;
-  } = {}): Promise<DetoxElement> {
+  } = {}): Promise<Detox.NativeElement> {
     log.info(
       `Wait for element with selector ${this.selector
       } with visibility set to ${visible.toString()}`,
@@ -329,8 +311,11 @@ class ElementsList {
   }
 }
 
-export const $ = (selector: string) => new Element(selector);
+export const $ = (selector: string, params?: {
+  and?: string,
+  withAncestor?: string,
+  withDescendant?: string,
+}) => new Element(selector);
 export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
-
 
 // TODO: implement scrollToIndex()
