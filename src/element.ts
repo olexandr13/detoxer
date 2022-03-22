@@ -64,10 +64,10 @@ class Element {
   }
 
   // do not use indexes, cause they differ on iOS and Android (docs and practice say the same)
-  atIndex(index: number): Detox.NativeElement {
+  atIndex(index: number): Element {
     // @ts-expect-error the issue occurs because of element could be either IndexableNativeElement or NativeElement 
     this.element = this.element.atIndex(index) as Detox.NativeElement;
-    return this.element;
+    return this;
   }
 
   async clear(): Promise<Detox.NativeElement> {

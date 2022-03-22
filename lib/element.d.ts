@@ -10,7 +10,7 @@ declare class Element {
         withDescendant?: string | undefined;
     } | undefined);
     private _getSelectorTypeAndValue;
-    atIndex(index: number): Detox.NativeElement;
+    atIndex(index: number): Element;
     clear(): Promise<Detox.NativeElement>;
     get(): Detox.IndexableNativeElement | Detox.NativeElement;
     longPress(): Promise<Detox.NativeElement>;
