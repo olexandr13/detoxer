@@ -34,13 +34,13 @@ class Element {
 
     if (params?.withAncestor) {
       const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withAncestor);
-      this.locator = this.locator.and(by[selectorType](selectorValue));
+      this.locator = this.locator.withAncestor(by[selectorType](selectorValue));
       this.element = detoxElement(this.locator);
     }
 
     if (params?.withDescendant) {
       const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withDescendant);
-      this.locator = this.locator.and(by[selectorType](selectorValue));
+      this.locator = this.locator.withDescendant(by[selectorType](selectorValue));
       this.element = detoxElement(this.locator);
     }
   }
