@@ -1,6 +1,6 @@
 {
   "name": "detoxer",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "description": "This is wrapper for detox framework with additional functionality including lazy elements, logger, helpers etc.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -9,7 +9,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "detox": "^19.4.1",
+    "detox": "^19.5.7",
     "tslog": "^3.2.0"
   },
   "devDependencies": {

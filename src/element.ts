@@ -16,6 +16,7 @@ class Element {
   // locator refers to detox matcher
   private locator: Detox.NativeMatcher;
   element: Detox.IndexableNativeElement | Detox.NativeElement;
+  clarifiedSelectorToPrint: string;
 
   // selector refers just to strin which is parsed to define matcher type and value
   constructor(private selector: string, private params?: ClarifyingSelector) {
@@ -23,10 +24,10 @@ class Element {
     this.locator = by[selectorType](selectorValue);
     this.element = detoxElement(this.locator);
 
-    if(params) log.debug(`Element locator has clarifier: ${helpers.prettyStringify(params)}`);
+    this.clarifiedSelectorToPrint = `"${this.selector}"${JSON.stringify(params) ? `, ${JSON.stringify(params)}` : ''}`;
 
     if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
-      throw new Error(`Only one param could be passed amoung of ${helpers.stringify(Object.keys(params))}`);
+      throw new Error(`Only one param could be passed amoung of ${helpers.prettyStringify(Object.keys(params))}`);
     }
 
     if (params?.and) {
@@ -80,17 +81,6 @@ class Element {
   }
 
   get(): Detox.IndexableNativeElement | Detox.NativeElement {
-    log.warn('* * * * * * * * * * ');
-    log.warn('SELECTOR:', this.selector);
-    log.warn('* * * * * * * * * * ');
-
-    log.warn('= = = = = = = = = = = =');
-    log.warn('PARAMS:', this.params);
-    log.warn('= = = = = = = = = = = =');
-
-    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
-    log.warn('LOCATOR:', this.locator);
-    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     return this.element;
   }
 
@@ -101,7 +91,7 @@ class Element {
   }
 
   async replaceText(value: string): Promise<Detox.NativeElement> {
-    log.info(`Replace text to "${value}" into element with selector "${this.selector}"`);
+    log.info(`Replace text to "${value}" into element with selector ${this.clarifiedSelectorToPrint}`);
     const elem = await this.wait();
     await elem.tap();
     await elem.replaceText(value);
@@ -148,13 +138,13 @@ class Element {
   async tap(point?: { x: number; y: number }): Promise<Detox.NativeElement> {
     const elem = await this.wait();
     log.info(
-      `Tap on element with selector "${this.selector}" at ${helpers.stringify(point) || 'default'
+      `Tap on element with selector ${this.clarifiedSelectorToPrint} at ${helpers.prettyStringify(point) || 'default'
       } point`,
     );
     try {
       await elem.tap(point);
     } catch (e) {
-      throw new Error(`Cannot tap on element with selector "${this.selector}"
+      throw new Error(`Cannot tap on element with selector ${this.clarifiedSelectorToPrint}
       ${e}`)
     }
     return elem;
@@ -169,7 +159,7 @@ class Element {
   }
 
   async type(value: string): Promise<Detox.NativeElement> {
-    log.info(`Type text "${value}" into element with selector "${this.selector}"`);
+    log.info(`Type text "${value}" into element with selector ${this.clarifiedSelectorToPrint}`);
     const elem = await this.wait();
     await elem.tap();
     await elem.typeText(value);
@@ -196,7 +186,7 @@ class Element {
         await waitFor(this.element).toBeVisible().withTimeout(timeout);
       }
     } catch (e) {
-      throw new Error(`Wait for element with locator "${helpers.stringify(this.selector)}" failed
+      throw new Error(`Wait for element with locator "${helpers.prettyStringify(this.selector)}" failed
       ${e}`);
     }
 
@@ -222,13 +212,13 @@ class Element {
 
   async getText(): Promise<string> {
     await this.wait();
-    log.info(`Getting text for element "${this.selector}"`);
+    log.info(`Getting text for element ${this.clarifiedSelectorToPrint}`);
     const platform = device.getPlatform();
     if (platform !== 'ios') throw new Error(`Can get text only for ios platform for now.
     Your current platform: ${platform}`);
 
     const text = (await (this.element as any).getAttributes()).label;
-    if (!text) throw new Error(`There is no text for element with selector "${this.selector}"`)
+    if (!text) throw new Error(`There is no text for element with selector ${this.clarifiedSelectorToPrint}`)
     return text;
   }
 
@@ -261,14 +251,14 @@ class Element {
         try {
           await expect(this.element).not.toBeVisible();
           isElementVisible = false;
-          log.info(`Element "${this.selector}" disappeared after ${waitTimeCounter} seconds.`);
+          log.info(`Element ${this.clarifiedSelectorToPrint} disappeared after ${waitTimeCounter} seconds.`);
         } catch (e) {
           log.debug(`Next error is expected. Please ignore > ${e}`);
           isElementVisible = true;
         }
       }
 
-      if (isElementVisible) throw new Error(`Expect element "${this.selector}" to disappear within ${timeout} seconds.
+      if (isElementVisible) throw new Error(`Expect element ${this.clarifiedSelectorToPrint} to disappear within ${timeout} seconds.
       But it's visible.`);
     },
 

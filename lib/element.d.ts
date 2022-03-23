@@ -9,6 +9,7 @@ declare class Element {
     private params?;
     private locator;
     element: Detox.IndexableNativeElement | Detox.NativeElement;
+    clarifiedSelectorToPrint: string;
     constructor(selector: string, params?: ClarifyingSelector | undefined);
     private _getSelectorTypeAndValue;
     atIndex(index: number): Element;

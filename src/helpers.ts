@@ -6,8 +6,4 @@ export const helpers = {
   async sleep(miliSeconds: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, miliSeconds));
   },
-
-  stringify(json: any): string {
-    return JSON.stringify(json, null, 2)
-  },
 }
