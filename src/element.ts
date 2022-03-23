@@ -6,41 +6,25 @@ export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 
 type SelectorType = 'id' | 'text' | 'label';
 
+type ClarifyingSelector = {
+  and?: string,
+  withAncestor?: string,
+  withDescendant?: string,
+} | undefined;
+
 class Element {
   // locator refers to detox matcher
   private locator: Detox.NativeMatcher;
   element: Detox.IndexableNativeElement | Detox.NativeElement;
-  params: {
-    and?: string,
-    withAncestor?: string,
-    withDescendant?: string,
-  } | undefined;
 
   // selector refers just to strin which is parsed to define matcher type and value
-  constructor(public selector: string, params?: {
-    and?: string,
-    withAncestor?: string,
-    withDescendant?: string,
-  }) {
-    this.params = params;
-    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
-
-    log.warn('* * * * * * * * * * ');
-    log.warn('SELECTOR:', this.params);
-    log.warn('* * * * * * * * * * ');
-
-    log.warn('= = = = = = = = = = = =');
-    log.warn('123PARAMS:', this.params);
-    log.warn('= = = = = = = = = = = =');
-
+  constructor(private selector: string, private params: ClarifyingSelector) {
+    const { selectorType, selectorValue } = this._getSelectorTypeAndValue(this.selector);
     this.locator = by[selectorType](selectorValue);
-    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
-    log.warn('LOCATOR:', this.locator);
-    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     this.element = detoxElement(this.locator);
 
     if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
-      throw new Error(`Only one param could be passed amoung of ${helpers.stringify(params)}`);
+      throw new Error(`Only one param could be passed amoung of ${helpers.stringify(Object.keys(params))}`);
     }
 
     if (params?.and) {
@@ -95,6 +79,17 @@ class Element {
   }
 
   get(): Detox.IndexableNativeElement | Detox.NativeElement {
+    log.warn('* * * * * * * * * * ');
+    log.warn('SELECTOR:', this.selector);
+    log.warn('* * * * * * * * * * ');
+
+    log.warn('= = = = = = = = = = = =');
+    log.warn('PARAMS:', this.params);
+    log.warn('= = = = = = = = = = = =');
+
+    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
+    log.warn('LOCATOR:', this.locator);
+    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     return this.element;
   }
 
@@ -313,27 +308,6 @@ class Element {
   }
 }
 
-class ElementsList {
-  elements: Element[];
-
-  constructor(selectorsList: string[]) {
-    this.elements = selectorsList.map((selector) => new Element(selector));
-  }
-
-  should = {
-    beVisible: async (): Promise<void> => {
-      for (let i = 0; i < this.elements.map.length; i++) {
-        await this.elements[i].wait();
-      }
-    },
-  }
-}
-
-export const $ = (selector: string, params?: {
-  and?: string,
-  withAncestor?: string,
-  withDescendant?: string,
-}) => new Element(selector);
-export const $$ = (selectorsList: string[]) => new ElementsList(selectorsList);
+export const $ = (selector: string, params: ClarifyingSelector) => new Element(selector, params);
 
 // TODO: implement scrollToIndex()
