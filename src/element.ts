@@ -25,7 +25,7 @@ class Element {
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     this.element = detoxElement(this.locator);
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
-    log.warn('ELEMENT:', this.locator);
+    log.warn('ELEMENT:', this.element);
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
 
     if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
