@@ -8,7 +8,7 @@ type SelectorType = 'id' | 'text' | 'label';
 
 class Element {
   // locator refers to detox matcher
-  private locator: Detox.NativeMatcher;
+  locator: Detox.NativeMatcher;
   element: Detox.IndexableNativeElement | Detox.NativeElement;
 
   // selector refers just to strin which is parsed to define matcher type and value
