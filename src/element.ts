@@ -167,7 +167,7 @@ class Element {
 
   async wait({
     timeout = 11000,
-    visible = true,
+    visible = false,
     sleepAfter = 800,
   }: {
     timeout?: number;
