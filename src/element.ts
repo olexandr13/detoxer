@@ -38,6 +38,7 @@ class Element {
     if (params?.withAncestor) {
       const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withAncestor);
       this.locator = this.locator.withAncestor(by[selectorType](selectorValue));
+      log.warn(' - - - - - NEW LOCATOR - - - - - ', this.locator);
       this.element = detoxElement(this.locator);
     }
 
