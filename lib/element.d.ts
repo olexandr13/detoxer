@@ -2,7 +2,7 @@ export declare type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 declare class Element {
     selector: string;
     private params?;
-    locator: Detox.NativeMatcher;
+    private locator;
     element: Detox.IndexableNativeElement | Detox.NativeElement;
     constructor(selector: string, params?: {
         and?: string | undefined;

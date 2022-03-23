@@ -8,7 +8,7 @@ type SelectorType = 'id' | 'text' | 'label';
 
 class Element {
   // locator refers to detox matcher
-  locator: Detox.NativeMatcher;
+  private locator: Detox.NativeMatcher;
   element: Detox.IndexableNativeElement | Detox.NativeElement;
 
   // selector refers just to strin which is parsed to define matcher type and value
@@ -36,6 +36,7 @@ class Element {
     }
 
     if (params?.withAncestor) {
+      throw new Error('WITH ANCESTOR PASSED');
       const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withAncestor);
       this.locator = this.locator.withAncestor(by[selectorType](selectorValue));
       log.warn(' - - - - - NEW LOCATOR - - - - - ', this.locator);
