@@ -1,7 +1,11 @@
 export declare type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 declare class Element {
     selector: string;
-    private params?;
+    params?: {
+        and?: string | undefined;
+        withAncestor?: string | undefined;
+        withDescendant?: string | undefined;
+    } | undefined;
     private locator;
     element: Detox.IndexableNativeElement | Detox.NativeElement;
     constructor(selector: string, params?: {
