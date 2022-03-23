@@ -176,8 +176,7 @@ class Element {
     sleepAfter?: number;
   } = {}): Promise<Detox.NativeElement> {
     log.info(
-      `Wait for element with selector ${this.selector
-      } with visibility set to ${visible.toString()}`,
+      `Wait for element with selector ${this.clarifiedSelectorToPrint} with visibility set to ${visible.toString()}`,
     );
     try {
       if (visible === false) {
@@ -186,7 +185,7 @@ class Element {
         await waitFor(this.element).toBeVisible().withTimeout(timeout);
       }
     } catch (e) {
-      throw new Error(`Wait for element with locator "${helpers.prettyStringify(this.selector)}" failed
+      throw new Error(`Wait for element with locator ${this.clarifiedSelectorToPrint} failed
       ${e}`);
     }
 
