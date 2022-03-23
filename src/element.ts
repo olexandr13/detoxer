@@ -20,7 +20,13 @@ class Element {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
 
     this.locator = by[selectorType](selectorValue);
+    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
+    log.warn('LOCATOR:', this.locator);
+    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     this.element = detoxElement(this.locator);
+    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
+    log.warn('ELEMENT:', this.locator);
+    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
 
     if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
       throw new Error(`Only one param could be passed amoung of ${helpers.stringify(params)}`);
