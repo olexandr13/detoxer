@@ -24,9 +24,6 @@ class Element {
     log.warn('LOCATOR:', this.locator);
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     this.element = detoxElement(this.locator);
-    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
-    log.warn('ELEMENT:', this.element);
-    log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
 
     if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
       throw new Error(`Only one param could be passed amoung of ${helpers.stringify(params)}`);
