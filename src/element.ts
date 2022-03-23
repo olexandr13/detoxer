@@ -23,6 +23,8 @@ class Element {
     this.locator = by[selectorType](selectorValue);
     this.element = detoxElement(this.locator);
 
+    if(params) log.debug(`Element locator has clarifier: ${helpers.prettyStringify(params)}`);
+
     if (params?.and && params.withAncestor || params?.and && params.withDescendant || params?.withAncestor && params.withDescendant) {
       throw new Error(`Only one param could be passed amoung of ${helpers.stringify(Object.keys(params))}`);
     }
@@ -36,7 +38,6 @@ class Element {
     if (params?.withAncestor) {
       const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withAncestor);
       this.locator = this.locator.withAncestor(by[selectorType](selectorValue));
-      log.warn(' - - - - - NEW LOCATOR - - - - - ', this.locator);
       this.element = detoxElement(this.locator);
     }
 
