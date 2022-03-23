@@ -19,7 +19,7 @@ class Element {
   }) {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
 
-    log.error(' - - - - - PARAMS:', this.params);
+    log.error('123PARAMS:', this.params);
 
     this.locator = by[selectorType](selectorValue);
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
