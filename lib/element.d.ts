@@ -1,18 +1,15 @@
 export declare type SwipeDirection = 'left' | 'right' | 'up' | 'down';
+declare type ClarifyingSelector = {
+    and?: string;
+    withAncestor?: string;
+    withDescendant?: string;
+} | undefined;
 declare class Element {
-    selector: string;
+    private selector;
+    private params;
     private locator;
     element: Detox.IndexableNativeElement | Detox.NativeElement;
-    params: {
-        and?: string;
-        withAncestor?: string;
-        withDescendant?: string;
-    } | undefined;
-    constructor(selector: string, params?: {
-        and?: string;
-        withAncestor?: string;
-        withDescendant?: string;
-    });
+    constructor(selector: string, params: ClarifyingSelector);
     private _getSelectorTypeAndValue;
     atIndex(index: number): Element;
     clear(): Promise<Detox.NativeElement>;
@@ -65,17 +62,5 @@ declare class Element {
         };
     };
 }
-declare class ElementsList {
-    elements: Element[];
-    constructor(selectorsList: string[]);
-    should: {
-        beVisible: () => Promise<void>;
-    };
-}
-export declare const $: (selector: string, params?: {
-    and?: string | undefined;
-    withAncestor?: string | undefined;
-    withDescendant?: string | undefined;
-} | undefined) => Element;
-export declare const $$: (selectorsList: string[]) => ElementsList;
+export declare const $: (selector: string, params: ClarifyingSelector) => Element;
 export {};
