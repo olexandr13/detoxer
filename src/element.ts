@@ -12,14 +12,14 @@ class Element {
   element: Detox.IndexableNativeElement | Detox.NativeElement;
 
   // selector refers just to strin which is parsed to define matcher type and value
-  constructor(public selector: string, private params?: {
+  constructor(public selector: string, public params?: {
     and?: string,
     withAncestor?: string,
     withDescendant?: string,
   }) {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
 
-    log.error(params);
+    log.error(' - - - - - PARAMS: - - - - - ', params);
 
     this.locator = by[selectorType](selectorValue);
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
