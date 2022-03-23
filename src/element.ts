@@ -10,14 +10,24 @@ class Element {
   // locator refers to detox matcher
   private locator: Detox.NativeMatcher;
   element: Detox.IndexableNativeElement | Detox.NativeElement;
+  params: {
+    and?: string,
+    withAncestor?: string,
+    withDescendant?: string,
+  } | undefined;
 
   // selector refers just to strin which is parsed to define matcher type and value
-  constructor(public selector: string, public params?: {
+  constructor(public selector: string, params?: {
     and?: string,
     withAncestor?: string,
     withDescendant?: string,
   }) {
+    this.params = params;
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
+
+    log.warn('* * * * * * * * * * ');
+    log.warn('SELECTOR:', this.params);
+    log.warn('* * * * * * * * * * ');
 
     log.warn('= = = = = = = = = = = =');
     log.warn('123PARAMS:', this.params);

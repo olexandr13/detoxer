@@ -1,18 +1,18 @@
 export declare type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 declare class Element {
     selector: string;
-    params?: {
-        and?: string | undefined;
-        withAncestor?: string | undefined;
-        withDescendant?: string | undefined;
-    } | undefined;
     private locator;
     element: Detox.IndexableNativeElement | Detox.NativeElement;
+    params: {
+        and?: string;
+        withAncestor?: string;
+        withDescendant?: string;
+    } | undefined;
     constructor(selector: string, params?: {
-        and?: string | undefined;
-        withAncestor?: string | undefined;
-        withDescendant?: string | undefined;
-    } | undefined);
+        and?: string;
+        withAncestor?: string;
+        withDescendant?: string;
+    });
     private _getSelectorTypeAndValue;
     atIndex(index: number): Element;
     clear(): Promise<Detox.NativeElement>;
