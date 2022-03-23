@@ -10,7 +10,7 @@ type ClarifyingSelector = {
   and?: string,
   withAncestor?: string,
   withDescendant?: string,
-} | undefined;
+};
 
 class Element {
   // locator refers to detox matcher
@@ -18,7 +18,7 @@ class Element {
   element: Detox.IndexableNativeElement | Detox.NativeElement;
 
   // selector refers just to strin which is parsed to define matcher type and value
-  constructor(private selector: string, private params: ClarifyingSelector) {
+  constructor(private selector: string, private params?: ClarifyingSelector) {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(this.selector);
     this.locator = by[selectorType](selectorValue);
     this.element = detoxElement(this.locator);
@@ -309,6 +309,6 @@ class Element {
   }
 }
 
-export const $ = (selector: string, params: ClarifyingSelector) => new Element(selector, params);
+export const $ = (selector: string, params?: ClarifyingSelector) => new Element(selector, params);
 
 // TODO: implement scrollToIndex()

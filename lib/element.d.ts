@@ -3,13 +3,13 @@ declare type ClarifyingSelector = {
     and?: string;
     withAncestor?: string;
     withDescendant?: string;
-} | undefined;
+};
 declare class Element {
     private selector;
-    private params;
+    private params?;
     private locator;
     element: Detox.IndexableNativeElement | Detox.NativeElement;
-    constructor(selector: string, params: ClarifyingSelector);
+    constructor(selector: string, params?: ClarifyingSelector | undefined);
     private _getSelectorTypeAndValue;
     atIndex(index: number): Element;
     clear(): Promise<Detox.NativeElement>;
@@ -62,5 +62,5 @@ declare class Element {
         };
     };
 }
-export declare const $: (selector: string, params: ClarifyingSelector) => Element;
+export declare const $: (selector: string, params?: ClarifyingSelector | undefined) => Element;
 export {};
