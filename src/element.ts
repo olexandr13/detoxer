@@ -19,6 +19,8 @@ class Element {
   }) {
     const { selectorType, selectorValue } = this._getSelectorTypeAndValue(selector);
 
+    log.error(params);
+
     this.locator = by[selectorType](selectorValue);
     log.warn(' - - - - - - - - - - - - - - - - - - - - - - - - - - ');
     log.warn('LOCATOR:', this.locator);
@@ -36,7 +38,6 @@ class Element {
     }
 
     if (params?.withAncestor) {
-      throw new Error('WITH ANCESTOR PASSED');
       const { selectorType, selectorValue } = this._getSelectorTypeAndValue(params.withAncestor);
       this.locator = this.locator.withAncestor(by[selectorType](selectorValue));
       log.warn(' - - - - - NEW LOCATOR - - - - - ', this.locator);
